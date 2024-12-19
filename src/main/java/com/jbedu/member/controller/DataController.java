@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,7 +65,7 @@ public class DataController {
 	public String join2() {
 		
 		return "join2";
-	}	
+	}
 
 	@RequestMapping(value = "/confirmID")  // 클라이언트의 로그인 요청을 여기서 catch(파라미터 값도 함께)
 	public String confirmID(HttpServletRequest request, Model model) {
@@ -145,5 +146,42 @@ public class DataController {
 //		model.addAttribute("memberDto", memberDto);  // 이것도 생략가능. 자동으로 실어보냄. 주석을 풀어도 되고 없어도됨. DTO 클래스의 이름이 너무 길어서 불편할 떄 이름 변경
 		
 		return "joinOk";
+	}
+	
+	@RequestMapping(value = "/page/{pagevalue}")  //javascript 등으로 넘어오는 매개 변수 형식
+	public String pagevalue(@PathVariable String pagevalue, Model model) {
+		model.addAttribute("page", pagevalue);
+		return "page";
+	}
+	
+	@RequestMapping(value = "/redirect")
+	public String redirect() {
+		
+		return "redirect";
+	}
+	
+	@RequestMapping(value = "/redirectGood")
+	public String redirectGood(@RequestParam("number") String number, Model model) {
+		
+		int number_int = Integer.parseInt(number);  // 문자 -> 정수 변환
+		
+		if(number_int > 10) {
+			model.addAttribute("number", number);
+//			return "redirect:redirectOk";  // 강제이동. 주소창에 새로운 요청으로 하는 방식. 전달된 값을 받을 수 없다
+			// 새로운 요청을 넣어라. 게시판 글쓰고 새글 포함해서 리스트 받아 올 경우. 사용하면 됨
+			return "redirectOk";  // jsp 파일을 실행시켜라
+		} else {
+			model.addAttribute("number", "0000");
+			return "redirect:redirectNo";
+		}
+			
+	}
+	
+	@RequestMapping(value = "/redirectOk")
+	public String redirectOk(Model model) {
+
+		model.addAttribute("number", "안녕하세요");
+		return "redirectOk";
+		
 	}	
 }
